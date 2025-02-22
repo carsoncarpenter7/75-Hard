@@ -118,12 +118,6 @@ function App() {
             <h1 className="text-3xl font-bold">75 Hard Challenge</h1>
           </div>
 
-          <ProgressCalendar 
-            progress={state.progress}
-            habits={state.habits}
-            startDate={startDate}
-          />
-
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-semibold">Overall Progress</h2>
@@ -150,6 +144,14 @@ function App() {
               progress={totalProgress}
               habitLastCreatedAt={habitLastCreatedAt}
               lastProgressUpdate={lastProgressUpdate}
+            />
+          </div>
+
+          <div className="mb-8">
+            <ProgressCalendar 
+              progress={state.progress}
+              habits={state.habits}
+              startDate={startDate}
             />
           </div>
 

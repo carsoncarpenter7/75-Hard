@@ -30,15 +30,17 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({ progress, ha
       {days.map((date) => (
         <div 
           key={date}
-          className="w-6 h-6 border rounded-sm flex items-center justify-center"
+          className="w-8 h-8 border rounded-sm flex flex-col items-center justify-center relative"
         >
           <div 
-            className={`w-4 h-4 rounded-full ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white ${
               getDayStatus(date) === 'complete' ? 'bg-green-500' :
               getDayStatus(date) === 'partial' ? 'bg-yellow-500' :
               'bg-red-500'
             }`}
-          />
+          >
+            {i + 1}
+          </div>
         </div>
       ))}
     </div>
