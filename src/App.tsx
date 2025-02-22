@@ -46,18 +46,15 @@ function App() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Keep only progress entries before today and where the new habit wasn't tracked
-    const filteredProgress = state.progress.filter(p => {
-      const progressDate = new Date(p.date);
-      progressDate.setHours(0, 0, 0, 0);
-      return progressDate < today;
-    });
+    const habitWithDate = {
+      ...habit,
+      createdAt: today.toISOString()
+    };
 
-    setHabitLastCreatedAt(new Date().toISOString());
+    setHabitLastCreatedAt(today.toISOString());
     setState(prev => ({
       ...prev,
-      habits: [...prev.habits, habit],
-      progress: filteredProgress
+      habits: [...prev.habits, habitWithDate]
     }));
   };
 

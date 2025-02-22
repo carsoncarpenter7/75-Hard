@@ -20,6 +20,15 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
   onRemoveHabit,
 }) => {
   const getHabitStatus = (habitId: string, date: string): boolean => {
+    const habit = habits.find(h => h.id === habitId);
+    const dateToCheck = new Date(date);
+    const createdAt = new Date(habit?.createdAt || '');
+    
+    // Only show progress for dates after habit creation
+    if (dateToCheck < createdAt) {
+      return false;
+    }
+    
     const dayProgress = progress.find(p => p.date === date);
     return dayProgress?.habits[habitId] || false;
   };
