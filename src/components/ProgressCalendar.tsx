@@ -27,7 +27,7 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({ progress, ha
 
   return (
     <div className="grid grid-cols-15 gap-1 mb-8">
-      {days.map((date) => (
+      {days.map((date, i) => (
         <div 
           key={date}
           className="w-8 h-8 border rounded-sm flex flex-col items-center justify-center relative"
