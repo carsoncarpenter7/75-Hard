@@ -26,7 +26,7 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
 
   return (
     <div className="mt-8 space-y-6">
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-[1fr_repeat(7,_minmax(0,_1fr))_1fr] gap-6">
         <div className="font-semibold text-gray-700">Lock In</div>
         {days.map(date => (
           <div key={date} className="text-center font-semibold">
@@ -39,69 +39,36 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
         <div className="font-semibold text-center">Actions</div>
 
         {habits.map(habit => (
-          <div key={habit.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className={`w-4 h-4 rounded-full ${habit.color}`}></div>
-                <h3 className="font-medium text-gray-800">{habit.name}</h3>
-              </div>
-              <div className="flex gap-2">
+          <React.Fragment key={habit.id}>
+            <div className="font-medium text-gray-600">{habit.name}</div>
+            {days.map(date => (
+              <div key={date} className="flex justify-center">
                 <button
-                  onClick={() => onEditHabit(habit)}
-                  className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                  title="Edit habit"
-                >
-                  <Edit2 size={18} />
-                </button>
-                <button
-                  onClick={() => onRemoveHabit(habit.id)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Remove habit"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
-            <div className="grid grid-cols-7 gap-2">
-              {days.map(date => (
-                <button
-                  key={`${habit.id}-${date}`}
-                  onClick={() => {
-                    if (window.navigator.vibrate) {
-                      window.navigator.vibrate(50);
-                    }
-                    onToggleHabit(habit.id, date);
-                  }}
-                  className={`aspect-square p-2 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
-                    ${getHabitStatus(habit.id, date)
-                      ? `${habit.color} border-transparent habit-check-animation`
-                      : 'bg-white border-gray-200 hover:border-gray-300'
-                    }`}
+                  onClick={() => onToggleHabit(habit.id, date)}
+                  className={`p-2 rounded-full ${
+                    getHabitStatus(habit.id, date)
+                      ? 'bg-green-500 hover:bg-green-600'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
                 >
                   {getHabitStatus(habit.id, date) ? (
                     <Check className="text-white" size={20} />
                   ) : (
-                    <div className="text-xs text-gray-400">
-                      {new Date(date).getDate()}
-                    </div>
+                    <X className="text-gray-500" size={20} />
                   )}
                 </button>
-              ))}
-            </div>
-          </div>
-        ))}
-            <div className="flex items-center justify-center gap-2">
+              </div>
+            ))}
+            <div className="flex justify-center gap-2">
               <button
                 onClick={() => onEditHabit(habit)}
-                className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                title="Edit habit"
+                className="p-2 text-blue-500 hover:bg-blue-50 rounded-full"
               >
                 <Edit2 size={20} />
               </button>
               <button
                 onClick={() => onRemoveHabit(habit.id)}
-                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                title="Remove habit"
+                className="p-2 text-red-500 hover:bg-red-50 rounded-full"
               >
                 <Trash2 size={20} />
               </button>
