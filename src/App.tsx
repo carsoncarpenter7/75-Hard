@@ -3,7 +3,7 @@ import { Trophy, Edit2, Trash2 } from 'lucide-react';
 import { HabitForm } from './components/HabitForm';
 import { HabitGrid } from './components/HabitGrid';
 import { ProgressBar } from './components/ProgressBar';
-import { calculateProgress, getLast7Days } from './utils';
+import { calculateProgress, getWeekDates, get75DayStartDate } from './utils';
 import type { Habit, DayProgress, HabitTrackerState } from './types';
 
 function App() {
