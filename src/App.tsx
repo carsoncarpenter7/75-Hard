@@ -3,6 +3,7 @@ import { Trophy, Edit2, Trash2 } from 'lucide-react';
 import { HabitForm } from './components/HabitForm';
 import { HabitGrid } from './components/HabitGrid';
 import { ProgressBar } from './components/ProgressBar';
+import { ProgressCalendar } from './components/ProgressCalendar';
 import { calculateProgress, getWeekDates, get75DayStartDate } from './utils';
 import type { Habit, DayProgress, HabitTrackerState } from './types';
 
@@ -116,6 +117,12 @@ function App() {
             <Trophy className="text-yellow-500" size={32} />
             <h1 className="text-3xl font-bold">75 Hard Challenge</h1>
           </div>
+
+          <ProgressCalendar 
+            progress={state.progress}
+            habits={state.habits}
+            startDate={startDate}
+          />
 
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
