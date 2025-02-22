@@ -34,7 +34,9 @@ function App() {
   const handleNextWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(currentWeekStart.getDate() + 7);
-    if (newDate <= new Date()) {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (newDate <= today) {
       setCurrentWeekStart(newDate);
     }
   };
