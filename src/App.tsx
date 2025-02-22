@@ -17,11 +17,7 @@ function App() {
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(null);
   const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(null);
-  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
-  });
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date());
 
   const days = getWeekDates(currentWeekStart);
   const startDate = get75DayStartDate();
@@ -47,18 +43,10 @@ function App() {
   }, [state]);
 
   const handleAddHabit = (habit: Habit) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const habitWithDate = {
-      ...habit,
-      createdAt: today.toISOString()
-    };
-
-    setHabitLastCreatedAt(today.toISOString());
+    setHabitLastCreatedAt(new Date().toISOString());
     setState(prev => ({
       ...prev,
-      habits: [...prev.habits, habitWithDate]
+      habits: [...prev.habits, habit]
     }));
   };
 
@@ -115,7 +103,7 @@ function App() {
     });
   };
 
-  const totalProgress = calculateProgress(state.progress, state.habits);
+  const totalProgress = calculateProgress(state.progress, state.habits.length);
   const today = new Date().toISOString().split('T')[0];
   const todayProgress = state.progress.find(p => p.date === today) || { habits: {} };
   const completedHabits = state.habits.filter(h => todayProgress.habits[h.id]).length;

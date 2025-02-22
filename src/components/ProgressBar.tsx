@@ -18,12 +18,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   habitLastCreatedAt,
   lastProgressUpdate
 }) => {
-  const todayDate = new Date(date);
-  const todayProgress = totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+  // Only show full progress if all habits for today are complete
+  const isAllComplete = totalHabits > 0 && completedHabits === totalHabits;
   
-  // If we have a new habit, maintain previous progress until all habits are complete
-  const hasNewHabit = habitLastCreatedAt && new Date(habitLastCreatedAt).toDateString() === todayDate.toDateString();
-  const displayProgress = hasNewHabit && todayProgress < 100 ? progress : todayProgress;
+  // Calculate partial progress
+  const partialProgress = totalHabits > 0 ? (completedHabits / totalHabits) * progress : 0;
+  
+  // Use full progress only when all habits are complete
+  const displayProgress = isAllComplete ? progress : partialProgress;
 
   return (
     <div className="w-full bg-gray-200 rounded-full h-4">
