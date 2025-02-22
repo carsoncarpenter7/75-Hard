@@ -11,7 +11,8 @@ interface ProgressCalendarProps {
 export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({ progress, habits, startDate }) => {
   const days = Array.from({ length: 75 }, (_, i) => {
     const date = new Date(startDate);
-    date.setDate(date.getDate() + i);
+    date.setHours(0, 0, 0, 0);
+    date.setDate(startDate.getDate() + i);
     return date.toISOString().split('T')[0];
   });
 
