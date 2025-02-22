@@ -15,6 +15,8 @@ function App() {
     };
   });
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+  const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(null);
+  const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(null);
 
   const days = getLast7Days();
 
@@ -23,6 +25,7 @@ function App() {
   }, [state]);
 
   const handleAddHabit = (habit: Habit) => {
+    setHabitLastCreatedAt(new Date().toISOString());
     setState(prev => ({
       ...prev,
       habits: [...prev.habits, habit]
@@ -59,6 +62,7 @@ function App() {
   };
 
   const handleToggleHabit = (habitId: string, date: string) => {
+    setLastProgressUpdate(new Date().toISOString());
     setState(prev => {
       const dayProgress = prev.progress.find(p => p.date === date) || {
         date,
@@ -82,6 +86,9 @@ function App() {
   };
 
   const totalProgress = calculateProgress(state.progress);
+  const today = new Date().toISOString().split('T')[0];
+  const todayProgress = state.progress.find(p => p.date === today) || { habits: {} };
+  const completedHabits = state.habits.filter(h => todayProgress.habits[h.id]).length;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -97,7 +104,14 @@ function App() {
               <h2 className="text-lg font-semibold">Overall Progress</h2>
               <span className="text-sm text-gray-500">{Math.round(totalProgress)}% Complete</span>
             </div>
-            <ProgressBar progress={totalProgress} />
+            <ProgressBar 
+              totalHabits={state.habits.length}
+              completedHabits={completedHabits}
+              date={today}
+              progress={totalProgress}
+              habitLastCreatedAt={habitLastCreatedAt}
+              lastProgressUpdate={lastProgressUpdate}
+            />
           </div>
 
           <HabitForm 
