@@ -12,18 +12,25 @@ export const generateColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-export const calculateProgress = (progress: DayProgress[], totalHabits: number): number => {
-  if (progress.length === 0) return 0;
+export const calculateProgress = (progress: DayProgress[], habits: Habit[]): number => {
+  if (progress.length === 0 || habits.length === 0) return 0;
   
-  // Count days where ALL habits were completed relative to habits that existed that day
+  // Count days where ALL applicable habits were completed
   const completedDays = progress.filter(day => {
-    const habitIds = Object.keys(day.habits);
-    const completedCount = habitIds.filter(id => day.habits[id]).length;
-    // Day is complete if all tracked habits were completed
-    return completedCount === totalHabits;
+    const dayDate = new Date(day.date);
+    // Get habits that existed on this day
+    const applicableHabits = habits.filter(habit => {
+      const habitCreationDate = new Date(habit.createdAt);
+      return dayDate >= habitCreationDate;
+    });
+    
+    if (applicableHabits.length === 0) return false;
+    
+    // Check if all applicable habits were completed
+    const completedCount = applicableHabits.filter(habit => day.habits[habit.id]).length;
+    return completedCount === applicableHabits.length;
   }).length;
   
-  // Calculate percentage based on 75 days goal
   return (completedDays / 75) * 100;
 };
 
