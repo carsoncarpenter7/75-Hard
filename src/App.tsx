@@ -85,7 +85,7 @@ function App() {
     });
   };
 
-  const totalProgress = calculateProgress(state.progress);
+  const totalProgress = calculateProgress(state.progress, state.habits.length);
   const today = new Date().toISOString().split('T')[0];
   const todayProgress = state.progress.find(p => p.date === today) || { habits: {} };
   const completedHabits = state.habits.filter(h => todayProgress.habits[h.id]).length;
