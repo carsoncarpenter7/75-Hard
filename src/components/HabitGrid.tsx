@@ -25,9 +25,9 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
   };
 
   return (
-    <div className="mt-8">
-      <div className="grid grid-cols-[200px_repeat(7,1fr)_auto] gap-2">
-        <div className="font-semibold">Habit</div>
+    <div className="mt-8 space-y-4">
+      <div className="grid grid-cols-[200px_repeat(7,1fr)_auto] gap-4 items-center bg-white p-4 rounded-xl shadow-sm">
+        <div className="font-semibold text-gray-700">Lock In</div>
         {days.map(date => (
           <div key={date} className="text-center font-semibold">
             {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
@@ -40,14 +40,19 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
 
         {habits.map(habit => (
           <React.Fragment key={habit.id}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all">
               <div className={`w-4 h-4 rounded-full ${habit.color}`}></div>
-              <span>{habit.name}</span>
+              <span className="font-medium text-gray-800">{habit.name}</span>
             </div>
             {days.map(date => (
               <button
                 key={`${habit.id}-${date}`}
-                onClick={() => onToggleHabit(habit.id, date)}
+                onClick={() => {
+                  if (window.navigator.vibrate) {
+                    window.navigator.vibrate(50);
+                  }
+                  onToggleHabit(habit.id, date);
+                }}
                 className={`aspect-square p-2 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
                   ${getHabitStatus(habit.id, date)
                     ? `${habit.color} border-transparent`

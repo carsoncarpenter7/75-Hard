@@ -44,10 +44,12 @@ function App() {
   }, [state]);
 
   const handleAddHabit = (habit: Habit) => {
-    setHabitLastCreatedAt(new Date().toISOString());
+    const today = new Date().toISOString().split('T')[0];
+    setHabitLastCreatedAt(today);
     setState(prev => ({
       ...prev,
-      habits: [...prev.habits, habit]
+      habits: [...prev.habits, habit],
+      progress: [...prev.progress, { date: today, habits: { [habit.id]: false } }]
     }));
   };
 
@@ -113,9 +115,9 @@ function App() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <Trophy className="text-yellow-500" size={32} />
-            <h1 className="text-3xl font-bold">75 Hard Challenge</h1>
+          <div className="flex items-center gap-3 mb-6 bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-xl text-white">
+            <Trophy className="text-yellow-400" size={32} />
+            <h1 className="text-3xl font-bold">75 Hard Challenge - Lock In</h1>
           </div>
 
           <div className="mb-8">
