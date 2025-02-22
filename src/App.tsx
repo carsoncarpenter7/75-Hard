@@ -18,10 +18,19 @@ function App() {
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(null);
   const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(null);
-  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date());
+  const [startDate] = useState<Date>(() => {
+    const saved = localStorage.getItem('challengeStartDate');
+    return saved ? new Date(saved) : new Date();
+  });
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(startDate);
 
   const days = getWeekDates(currentWeekStart);
-  const startDate = get75DayStartDate();
+
+  useEffect(() => {
+    if (!localStorage.getItem('challengeStartDate')) {
+      localStorage.setItem('challengeStartDate', startDate.toISOString());
+    }
+  }, [startDate]);
 
   const handlePreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
@@ -85,6 +94,14 @@ function App() {
   };
 
   const handleToggleHabit = (habitId: string, date: string) => {
+    const selectedDate = new Date(date);
+    const startDateOnly = new Date(startDate.setHours(0,0,0,0));
+    
+    if (selectedDate < startDateOnly) {
+      alert("Cannot track habits before the challenge start date!");
+      return;
+    }
+    
     setLastProgressUpdate(new Date().toISOString());
     setState(prev => {
       const dayProgress = prev.progress.find(p => p.date === date) || {

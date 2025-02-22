@@ -30,10 +30,12 @@ export const calculateProgress = (progress: DayProgress[], totalHabits: number):
 export const getWeekDates = (startDate: Date = new Date()): string[] => {
   const dates = [];
   const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
   
   for (let i = 0; i < 7; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
+    // Use local timezone date string
     dates.push(date.toISOString().split('T')[0]);
   }
   return dates;
