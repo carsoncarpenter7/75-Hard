@@ -34,9 +34,9 @@ function App() {
   const handleNextWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(currentWeekStart.getDate() + 7);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    if (newDate <= today) {
+    const maxDate = new Date(startDate);
+    maxDate.setDate(maxDate.getDate() + 74); // Last day of 75-day challenge
+    if (newDate <= maxDate) {
       setCurrentWeekStart(newDate);
     }
   };
