@@ -4,7 +4,7 @@ import { HabitForm } from './components/HabitForm';
 import { HabitGrid } from './components/HabitGrid';
 import { ProgressBar } from './components/ProgressBar';
 import { ProgressCalendar } from './components/ProgressCalendar';
-import { calculateProgress, getWeekDates, get75DayStartDate } from './utils';
+import { calculateProgress, getWeekDates, get75DayStartDate, getYearStartDate } from './utils';
 import type { Habit, DayProgress, HabitTrackerState } from './types';
 
 function App() {
