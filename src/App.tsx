@@ -17,8 +17,26 @@ function App() {
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(null);
   const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(null);
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date());
 
-  const days = getLast7Days();
+  const days = getWeekDates(currentWeekStart);
+  const startDate = get75DayStartDate();
+
+  const handlePreviousWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() - 7);
+    if (newDate >= startDate) {
+      setCurrentWeekStart(newDate);
+    }
+  };
+
+  const handleNextWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(currentWeekStart.getDate() + 7);
+    if (newDate <= new Date()) {
+      setCurrentWeekStart(newDate);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem('habitTracker', JSON.stringify(state));
@@ -102,7 +120,21 @@ function App() {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-semibold">Overall Progress</h2>
-              <span className="text-sm text-gray-500">{Math.round(totalProgress)}% Complete</span>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handlePreviousWeek}
+                  className="px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                >
+                  ← Previous Week
+                </button>
+                <span className="text-sm text-gray-500">{Math.round(totalProgress)}% Complete</span>
+                <button
+                  onClick={handleNextWeek}
+                  className="px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                >
+                  Next Week →
+                </button>
+              </div>
             </div>
             <ProgressBar 
               totalHabits={state.habits.length}

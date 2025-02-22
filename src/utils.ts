@@ -27,12 +27,20 @@ export const calculateProgress = (progress: DayProgress[], totalHabits: number):
   return (completedDays / 75) * 100;
 };
 
-export const getLast7Days = (): string[] => {
+export const getWeekDates = (startDate: Date = new Date()): string[] => {
   const dates = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
+  const sunday = new Date(startDate);
+  sunday.setDate(startDate.getDate() - startDate.getDay()); // Go to Sunday
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(sunday);
+    date.setDate(sunday.getDate() + i);
     dates.push(date.toISOString().split('T')[0]);
   }
   return dates;
+};
+
+export const get75DayStartDate = (): Date => {
+  const today = new Date();
+  return new Date(today.setDate(today.getDate() - 74)); // 75 days including today
 };
