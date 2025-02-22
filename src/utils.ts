@@ -35,10 +35,16 @@ export const getWeekDates = (startDate: Date = new Date()): string[] => {
   for (let i = 0; i < 7; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
-    // Use local timezone date string
     dates.push(date.toISOString().split('T')[0]);
   }
   return dates;
+};
+
+export const getYearStartDate = (): Date => {
+  const date = new Date();
+  date.setMonth(0, 1); // January 1st
+  date.setHours(0, 0, 0, 0);
+  return date;
 };
 
 export const get75DayStartDate = (): Date => {

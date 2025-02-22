@@ -19,9 +19,9 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
   onEditHabit,
   onRemoveHabit,
 }) => {
-  const getHabitStatus = (habitId: string, date: string): boolean => {
+  const getHabitStatus = (habitId: string, date: string): boolean | undefined => {
     const dayProgress = progress.find(p => p.date === date);
-    return dayProgress?.habits[habitId] || false;
+    return dayProgress?.habits[habitId];
   };
 
   return (
@@ -43,20 +43,23 @@ export const HabitGrid: React.FC<HabitGridProps> = ({
             <div className="font-medium text-gray-600">{habit.name}</div>
             {days.map(date => (
               <div key={date} className="flex justify-center">
-                <button
-                  onClick={() => onToggleHabit(habit.id, date)}
+                <div
+                  onClick={() => getHabitStatus(habit.id, date) !== undefined && onToggleHabit(habit.id, date)}
                   className={`p-2 rounded-full ${
-                    getHabitStatus(habit.id, date)
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-gray-200 hover:bg-gray-300'
+                    getHabitStatus(habit.id, date) === undefined
+                      ? 'bg-gray-50 cursor-not-allowed'
+                      : getHabitStatus(habit.id, date)
+                        ? 'bg-green-500 hover:bg-green-600'
+                        : 'bg-gray-200 hover:bg-gray-300'
                   }`}
                 >
-                  {getHabitStatus(habit.id, date) ? (
-                    <Check className="text-white" size={20} />
-                  ) : (
-                    <X className="text-gray-500" size={20} />
-                  )}
-                </button>
+                  {getHabitStatus(habit.id, date) === undefined
+                    ? <span className="text-gray-400 text-xs">Pre-challenge</span>
+                    : getHabitStatus(habit.id, date)
+                      ? <Check className="text-white" size={20} />
+                      : <X className="text-gray-500" size={20} />
+                  }
+                </div>
               </div>
             ))}
             <div className="flex justify-center gap-2">

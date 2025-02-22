@@ -32,10 +32,12 @@ function App() {
     }
   }, [startDate]);
 
+  const yearStartDate = getYearStartDate();
+  
   const handlePreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(currentWeekStart.getDate() - 7);
-    if (newDate >= startDate) {
+    if (newDate >= yearStartDate) {
       setCurrentWeekStart(newDate);
     }
   };
