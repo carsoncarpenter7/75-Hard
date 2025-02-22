@@ -1,43 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Edit2, Trash2 } from 'lucide-react';
-import { HabitForm } from './components/HabitForm';
-import { HabitGrid } from './components/HabitGrid';
-import { ProgressBar } from './components/ProgressBar';
-import { ProgressCalendar } from './components/ProgressCalendar';
-import { calculateProgress, getWeekDates, get75DayStartDate, getYearStartDate } from './utils';
-import type { Habit, DayProgress, HabitTrackerState } from './types';
+import React, { useState, useEffect } from "react";
+import { Trophy, Edit2, Trash2 } from "lucide-react";
+import { HabitForm } from "./components/HabitForm";
+import { HabitGrid } from "./components/HabitGrid";
+import { ProgressBar } from "./components/ProgressBar";
+import { ProgressCalendar } from "./components/ProgressCalendar";
+import { calculateProgress, getWeekDates, get75DayStartDate } from "./utils";
+import type { Habit, DayProgress, HabitTrackerState } from "./types";
 
 function App() {
   const [state, setState] = useState<HabitTrackerState>(() => {
-    const saved = localStorage.getItem('habitTracker');
-    return saved ? JSON.parse(saved) : {
-      habits: [],
-      progress: []
-    };
+    const saved = localStorage.getItem("habitTracker");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          habits: [],
+          progress: [],
+        };
   });
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
-  const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(null);
-  const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(null);
-  const [startDate] = useState<Date>(() => {
-    const saved = localStorage.getItem('challengeStartDate');
-    return saved ? new Date(saved) : new Date();
-  });
-  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(startDate);
+  const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(
+    null,
+  );
+  const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(
+    null,
+  );
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date());
+  const [challengeStartDate, setChallengeStartDate] = useState<Date>(
+    new Date(),
+  ); // Add challengeStartDate
 
   const days = getWeekDates(currentWeekStart);
 
-  useEffect(() => {
-    if (!localStorage.getItem('challengeStartDate')) {
-      localStorage.setItem('challengeStartDate', startDate.toISOString());
-    }
-  }, [startDate]);
+  // Use habitLastCreatedAt if it exists, otherwise use the default start date
+  const startDate = habitLastCreatedAt
+    ? new Date(habitLastCreatedAt)
+    : get75DayStartDate();
 
-  const yearStartDate = getYearStartDate();
-  
   const handlePreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(currentWeekStart.getDate() - 7);
-    if (newDate >= yearStartDate) {
+    if (newDate >= startDate) {
       setCurrentWeekStart(newDate);
     }
   };
@@ -45,92 +47,104 @@ function App() {
   const handleNextWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(currentWeekStart.getDate() + 7);
-    const maxDate = new Date(startDate);
-    maxDate.setDate(maxDate.getDate() + 74); // Last day of 75-day challenge
-    if (newDate <= maxDate) {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (newDate <= today) {
       setCurrentWeekStart(newDate);
     }
   };
 
   useEffect(() => {
-    localStorage.setItem('habitTracker', JSON.stringify(state));
+    localStorage.setItem("habitTracker", JSON.stringify(state));
   }, [state]);
 
   const handleAddHabit = (habit: Habit) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     setHabitLastCreatedAt(today);
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       habits: [...prev.habits, habit],
-      progress: [...prev.progress, { date: today, habits: { [habit.id]: false } }]
+      progress: [
+        ...prev.progress,
+        { date: today, habits: { [habit.id]: false } },
+      ],
     }));
   };
 
   const handleEditHabit = (habitId: string, newName: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      habits: prev.habits.map(habit =>
-        habit.id === habitId
-          ? { ...habit, name: newName }
-          : habit
-      )
+      habits: prev.habits.map((habit) =>
+        habit.id === habitId ? { ...habit, name: newName } : habit,
+      ),
     }));
     setEditingHabit(null);
   };
 
   const handleRemoveHabit = (habitId: string) => {
-    if (!confirm('Are you sure you want to remove this habit? This action cannot be undone.')) {
+    if (
+      !confirm(
+        "Are you sure you want to remove this habit? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      habits: prev.habits.filter(habit => habit.id !== habitId),
-      progress: prev.progress.map(day => ({
+      habits: prev.habits.filter((habit) => habit.id !== habitId),
+      progress: prev.progress.map((day) => ({
         ...day,
         habits: Object.fromEntries(
-          Object.entries(day.habits).filter(([id]) => id !== habitId)
-        )
-      }))
+          Object.entries(day.habits).filter(([id]) => id !== habitId),
+        ),
+      })),
     }));
   };
 
   const handleToggleHabit = (habitId: string, date: string) => {
-    const selectedDate = new Date(date);
-    const startDateOnly = new Date(startDate.setHours(0,0,0,0));
-    
-    if (selectedDate < startDateOnly) {
-      alert("Cannot track habits before the challenge start date!");
-      return;
-    }
-    
     setLastProgressUpdate(new Date().toISOString());
-    setState(prev => {
-      const dayProgress = prev.progress.find(p => p.date === date) || {
+    setState((prev) => {
+      const dayProgress = prev.progress.find((p) => p.date === date) || {
         date,
-        habits: {}
+        habits: {},
       };
 
-      const updatedProgress = prev.progress.filter(p => p.date !== date);
+      const updatedProgress = prev.progress.filter((p) => p.date !== date);
       const updatedDayProgress = {
         ...dayProgress,
         habits: {
           ...dayProgress.habits,
-          [habitId]: !dayProgress.habits[habitId]
-        }
+          [habitId]: !dayProgress.habits[habitId],
+        },
       };
 
       return {
         ...prev,
-        progress: [...updatedProgress, updatedDayProgress]
+        progress: [...updatedProgress, updatedDayProgress],
       };
     });
   };
 
   const totalProgress = calculateProgress(state.progress, state.habits.length);
-  const today = new Date().toISOString().split('T')[0];
-  const todayProgress = state.progress.find(p => p.date === today) || { habits: {} };
-  const completedHabits = state.habits.filter(h => todayProgress.habits[h.id]).length;
+  const today = new Date().toISOString().split("T")[0];
+  const todayProgress = state.progress.find((p) => p.date === today) || {
+    habits: {},
+  };
+  const completedHabits = state.habits.filter(
+    (h) => todayProgress.habits[h.id],
+  ).length;
+
+  // Reset the challenge
+  const handleResetChallenge = () => {
+    const today = new Date().toISOString().split("T")[0];
+    setChallengeStartDate(new Date()); // Set the challenge start date to today
+    setHabitLastCreatedAt(today); // Set the last habit creation date to today
+    setState({
+      habits: [],
+      progress: [{ date: today, habits: {} }], // Initialize progress with today's date
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -151,7 +165,9 @@ function App() {
                 >
                   ← Previous Week
                 </button>
-                <span className="text-sm text-gray-500">{Math.round(totalProgress)}% Complete</span>
+                <span className="text-sm text-gray-500">
+                  {Math.round(totalProgress)}% Complete
+                </span>
                 <button
                   onClick={handleNextWeek}
                   className="px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
@@ -160,7 +176,7 @@ function App() {
                 </button>
               </div>
             </div>
-            <ProgressBar 
+            <ProgressBar
               totalHabits={state.habits.length}
               completedHabits={completedHabits}
               date={today}
@@ -171,20 +187,20 @@ function App() {
           </div>
 
           <div className="mb-8">
-            <ProgressCalendar 
+            <ProgressCalendar
               progress={state.progress}
               habits={state.habits}
-              startDate={startDate}
+              startDate={startDate} // Use the new startDate
             />
           </div>
 
-          <HabitForm 
+          <HabitForm
             onAddHabit={handleAddHabit}
             editingHabit={editingHabit}
             onEditHabit={handleEditHabit}
             onCancelEdit={() => setEditingHabit(null)}
           />
-          
+
           {state.habits.length > 0 ? (
             <HabitGrid
               habits={state.habits}
@@ -199,6 +215,12 @@ function App() {
               Add your first habit to get started!
             </div>
           )}
+          <button
+            onClick={handleResetChallenge}
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            Reset Challenge
+          </button>
         </div>
       </div>
     </div>
