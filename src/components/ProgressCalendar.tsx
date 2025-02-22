@@ -15,6 +15,17 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({ progress, ha
     return date.toISOString().split('T')[0];
   });
 
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 74); // 75th day
+
+  const formatDisplayDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { 
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
   const getDayStatus = (date: string): 'complete' | 'partial' | 'incomplete' => {
     const dayProgress = progress.find(p => p.date === date);
     if (!dayProgress) return 'incomplete';
@@ -26,7 +37,12 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({ progress, ha
   };
 
   return (
-    <div className="grid grid-cols-15 gap-1 mb-8">
+    <div className="space-y-2">
+      <div className="flex justify-between text-sm text-gray-600">
+        <div>Start: {formatDisplayDate(startDate)}</div>
+        <div>End: {formatDisplayDate(endDate)}</div>
+      </div>
+      <div className="grid grid-cols-15 gap-1">
       {days.map((date, i) => (
         <div 
           key={date}
@@ -43,6 +59,7 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({ progress, ha
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 };
