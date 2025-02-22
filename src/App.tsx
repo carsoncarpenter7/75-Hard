@@ -17,7 +17,11 @@ function App() {
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [habitLastCreatedAt, setHabitLastCreatedAt] = useState<string | null>(null);
   const [lastProgressUpdate, setLastProgressUpdate] = useState<string | null>(null);
-  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
 
   const days = getWeekDates(currentWeekStart);
   const startDate = get75DayStartDate();

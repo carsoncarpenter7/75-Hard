@@ -49,5 +49,6 @@ export const getWeekDates = (startDate: Date = new Date()): string[] => {
 
 export const get75DayStartDate = (): Date => {
   const today = new Date();
-  return new Date(today.setDate(today.getDate() - 74)); // 75 days including today
+  today.setHours(0, 0, 0, 0);
+  return today;
 };
