@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface ProgressBarProps {
@@ -28,11 +27,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const displayProgress = isAllComplete ? progress : partialProgress;
 
   return (
-    <div className="w-full bg-gray-200 rounded-full h-4">
+    <div className="w-full bg-gray-200 rounded-full h-4 relative">
       <div
         className="bg-green-500 h-4 rounded-full transition-all duration-300"
         style={{ width: `${Math.min(displayProgress, 100)}%` }}
       />
+      <span className="absolute left-1/2 transform -translate-x-1/2 text-xs text-gray-700">
+        {Math.round(displayProgress)}%
+      </span>
     </div>
   );
 };

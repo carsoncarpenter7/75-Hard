@@ -12,7 +12,6 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({
   habits,
   startDate,
 }) => {
-  // Start from today's date
   const today = new Date();
   const days = Array.from({ length: 75 }, (_, i) => {
     const date = new Date(today);
@@ -20,19 +19,13 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({
     return date.toISOString().split("T")[0];
   });
 
-  const getDayStatus = (
-    date: string,
-  ): "complete" | "partial" | "incomplete" => {
+  const getDayStatus = (date: string): "complete" | "partial" | "incomplete" => {
     const dayProgress = progress.find((p) => p.date === date);
     if (!dayProgress) return "incomplete";
 
-    const completedCount = habits.filter(
-      (h) => dayProgress.habits[h.id],
-    ).length;
+    const completedCount = habits.filter((h) => dayProgress.habits[h.id]).length;
     if (completedCount === habits.length) return "complete";
     if (completedCount >= Math.floor(habits.length / 2)) return "partial";
-    if (completedCount === 1) return "incomplete";
-
     return "incomplete";
   };
 
@@ -41,17 +34,15 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({
       {days.map((date, i) => (
         <div
           key={date}
-          className="w-8 h-8 border rounded-sm flex flex-col items-center justify-center relative"
+          className={`w-8 h-8 border rounded-sm flex flex-col items-center justify-center relative transition-colors duration-200 ${
+            getDayStatus(date) === "complete"
+              ? "bg-green-500"
+              : getDayStatus(date) === "partial"
+              ? "bg-yellow-500"
+              : "bg-red-500"
+          }`}
         >
-          <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white ${
-              getDayStatus(date) === "complete"
-                ? "bg-green-500"
-                : getDayStatus(date) === "partial"
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
-            }`}
-          >
+          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white">
             {i + 1}
           </div>
         </div>
