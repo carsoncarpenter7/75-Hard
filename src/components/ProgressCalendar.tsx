@@ -12,9 +12,11 @@ export const ProgressCalendar: React.FC<ProgressCalendarProps> = ({
   habits,
   startDate,
 }) => {
+  // Start from today's date
+  const today = new Date();
   const days = Array.from({ length: 75 }, (_, i) => {
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + i);
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
     return date.toISOString().split("T")[0];
   });
 

@@ -30,6 +30,9 @@ function App() {
   ); // Add challengeStartDate
 
   const days = getWeekDates(currentWeekStart);
+  const today = new Date().toISOString().split("T")[0];
+  // Revert to original filtering logic
+  const filteredDays = days; // Include all days for now
 
   // Use habitLastCreatedAt if it exists, otherwise use the default start date
   const startDate = habitLastCreatedAt
@@ -126,19 +129,22 @@ function App() {
     });
   };
 
-  const totalProgress = calculateProgress(state.progress, state.habits.length);
-  const today = new Date().toISOString().split("T")[0];
   const todayProgress = state.progress.find((p) => p.date === today) || {
     habits: {},
   };
   const completedHabits = state.habits.filter(
-    (h) => todayProgress.habits[h.id],
+    (h) => todayProgress.habits[h.id] === true,
   ).length;
+
+  const totalProgress = calculateProgress(
+    state.progress.filter((p) => p.date === today), // Only include today's progress
+    state.habits.length
+  );
 
   // Reset the challenge
   const handleResetChallenge = () => {
     const today = new Date().toISOString().split("T")[0];
-    setChallengeStartDate(new Date()); // Set the challenge start date to today
+    setChallengeStartDate(new Date()); // Ensure the challenge start date is set to today
     setHabitLastCreatedAt(today); // Set the last habit creation date to today
     setState({
       habits: [],
@@ -191,6 +197,7 @@ function App() {
               progress={state.progress}
               habits={state.habits}
               startDate={startDate} // Use the new startDate
+              days={filteredDays} // Pass all days
             />
           </div>
 
@@ -204,7 +211,7 @@ function App() {
           {state.habits.length > 0 ? (
             <HabitGrid
               habits={state.habits}
-              days={days}
+              days={filteredDays} // Pass all days
               progress={state.progress}
               onToggleHabit={handleToggleHabit}
               onEditHabit={setEditingHabit}
